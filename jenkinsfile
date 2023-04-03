@@ -32,5 +32,60 @@ pipeline{
                 sh 'mvn clean install'
             }
         }
+        stage('Static Code Analysis'){
+
+            steps{
+
+                script{
+
+                    withSonarQubeEnv(credentialsId: 'sonar-api'){
+                        sh 'mvn clean package sonar:sonar'
+                    }
+                }
+            }
+        }
+        stage('Quality Gate Analysis'){
+
+            steps{
+
+                script{
+
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
+                }
+            }
+        }
+        stage('Upload Artifact to Nexus'){
+
+            steps{
+
+                script{
+
+                    nexusArtifactUploader artifacts: [[artifactId: 'springboot', classifier: '', file: 'target/Uber.jar', type: 'jar']], credentialsId: 'nexus-link', groupId: 'com.example', nexusUrl: '52.207.221.1:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'demoapp-release', version: '1.0.0'
+                }
+            }
+        }
+        stage('Docker Image Build'){
+
+            steps{
+
+                script{
+
+                    sh 'docker build -t myuber'
+                }
+            }
+        }
+        stage('Uploading image to Docker hub'){
+
+            steps{
+
+                script{
+                    withCredentials([usernameColonPassword(credentialsId: 'dockerhub_cred', variable: 'docker hub')]){
+                        sh 'docker login -u clemenrance -p ${dockerhub_cred}'
+                        sh 'docker tag myuber:latest clemenrance/pipeline-images:demoappimage'
+                        sh 'docker push clemenrance/pipeline-images:demoappimage'
+                    }
+                }
+            }
+        }
     }
 }
