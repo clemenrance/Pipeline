@@ -80,7 +80,7 @@ pipeline{
 
                 script{
                     withCredentials([string(credentialsId: 'docker-cred', variable: 'docker-cred')]){
-                        sh 'docker login -u clemenrance -p ${docker-cred}'
+                        sh 'docker login -u clemenrance -p Tahjoro@123'
                         sh 'docker tag myuber:latest clemenrance/pipeline-images:demoappimage'
                         sh 'docker push clemenrance/pipeline-images:myuber'
                     }
