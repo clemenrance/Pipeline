@@ -60,7 +60,7 @@ pipeline{
 
                 script{
 
-                    nexusArtifactUploader artifacts: [[artifactId: 'springboot', classifier: '', file: 'target/Uber.jar', type: 'jar']], credentialsId: 'nexus-link', groupId: 'com.example', nexusUrl: '3.92.226.181:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'demmoapp-release', version: '1.0.5'
+                    nexusArtifactUploader artifacts: [[artifactId: 'springboot', classifier: '', file: 'target/Uber.jar', type: 'jar']], credentialsId: 'nexus-link', groupId: 'com.example', nexusUrl: '3.92.226.181:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'demmoapp-release', version: '1.0.6'
                 }
             }
         }
@@ -81,7 +81,7 @@ pipeline{
                 script{
                     withCredentials([string(credentialsId: 'docker-cred', variable: 'docker-cred')]){
                         sh 'docker login -u clemenrance -p Tahjoro@123'
-                        sh 'docker tag myuber:latest clemenrance/pipeline-images:demoappimage'
+                        sh 'docker tag myuber:latest clemenrance/pipeline-images:myuber'
                         sh 'docker push clemenrance/pipeline-images:myuber'
                     }
                 }
